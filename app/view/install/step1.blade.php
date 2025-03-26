@@ -1,0 +1,98 @@
+@extends('install/layouts/app')
+
+@section('title', '安装环境检测')
+
+@section('content')
+    <h1 class="my-5 pb-2.5 text-center border-b">{{ $appName }} {{ $appVersion }} 安装环境检测</h1>
+
+    <table class="table table-hover bordered mb-5">
+        <thead>
+        <tr>
+            <th>检查名称</th>
+            <th>图床要求</th>
+            <th>检测结果</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>PHP</td>
+            <td>PHP >= 8.2</td>
+            <td>{!! checkPass($phpEnv) !!}</td>
+        </tr>
+        <tr>
+            <td>FileInfo</td>
+            <td>必须支持 | 安装后重启PHP</td>
+            <td>{!! checkPass($fileInfoExtensionIsExist) !!}</td>
+        </tr>
+        <tr>
+            <td>GD</td>
+            <td>必须支持 | 安装后重启PHP</td>
+            <td>{!! checkPass($gdExtensionIsExist) !!}</td>
+        </tr>
+        <tr>
+            <td>UploadController.php</td>
+            <td>0755可执行权限 | 非windows系统</td>
+            <td>{!! checkPass($uploadControllerPermission) !!}</td>
+        </tr>
+        <tr>
+            <td>openssl</td>
+            <td>建议支持 | 生成加密删除url，需PHP>7.0</td>
+            <td>{!! checkPass($openSSLExtensionIsExist) !!}</td>
+        </tr>
+        <tr>
+            <td>{{ config('upload.path') }}</td>
+            <td>图片存储目录需可写</td>
+            <td>{!! checkPass($imagesPathPermission) !!}</td>
+        </tr>
+        <tr>
+            <td>.user.ini</td>
+            <td>需关闭防跨目录读写文件 | 删除方法：<a href="https://lnmp.org/faq/lnmp-vhost-add-howto.html#user.ini"
+                                                     target="_blank"> LNMP</a> | <a
+                        href="https://www.bt.cn/bbs/forum.php?mod=viewthread&tid=36605&page=1#pid122035"
+                        target="_blank">BT宝塔</a></td>
+            <td>{!! checkPass($userIniIsExist) !!}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    @if(in_array(false, [$phpEnv, $fileInfoExtensionIsExist, $gdExtensionIsExist, $uploadControllerPermission, $openSSLExtensionIsExist, $imagesPathPermission, $userIniIsExist]))
+        <p class="text-primary mb-2.5">如果使用Liunx主机权限错误可以使用以下命令: </p>
+        <h6 class="font-mono my-2.5">chmod 755 -R {{ base_path() }}</h6>
+        <h6 class="font-mono my-2.5">chown -R www:www {{ base_path() }}</h6>
+        <button class="btn size-sm primary" type="button" data-toggle="modal" data-size="lg" data-target="#imageModal">
+            宝塔面板赋予权限演示
+        </button>
+
+        <div class="modal" id="imageModal">
+            <div class="modal-dialog shadow size-sm bd-none">
+                <div class="modal-content">
+                    <div class="modal-actions top-1.5 right-1.5">
+                        <button type="button" class="btn square ghost" data-dismiss="modal"><span class="close"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="p-5">
+                            <img src="/chmod.png" class="w-full" alt="宝塔面板赋予权限演示">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-5"/>
+        <p class="text-danger mb-5">
+            如果你不想安装上述PHP扩展或跳过安装过程请删除<code class="mx-2.5">install</code>目录
+            <a class="btn size-xs primary ml-2.5" href="https://www.kancloud.cn/easyimage/easyimage/2635850"
+               target="_blank"
+            >跳过安装页面</a>
+        </p>
+        <a href="/install/step1">
+            <button class="btn danger size-sm" type="button">请满足上述要求后点击刷新</button>
+        </a>
+    @else
+        <a href="/install/step2">
+            <button class="btn primary" type="button">下一步(1/2)</button>
+        </a>
+    @endif
+
+@endsection
