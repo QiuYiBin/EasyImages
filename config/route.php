@@ -14,8 +14,12 @@
 
 use Webman\Route;
 
+//Route::post('/upload/tus', [\app\controller\UploadController::class, 'create'])->name('upload.create');
 
+Route::any('/upload/tus/[{path:.+}]', [\app\controller\UploadController::class, 'tus'])->name('upload.tus');
 
+//Route::head('/upload/tus/{filename}', [\app\controller\UploadController::class, 'getUploadProgress'])->name('upload.tus.progress');
 
+//Route::patch('/upload/tus/{filename}', [\app\controller\UploadController::class, 'uploadChunk'])->name('upload.tus.chunk');
 
-
+//Route::delete('/upload/tus/{filename}', [\app\controller\UploadController::class, 'deleteUpload'])->name('upload.tus.delete');

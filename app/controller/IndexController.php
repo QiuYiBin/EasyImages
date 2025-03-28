@@ -8,11 +8,8 @@ class IndexController
 {
     public function index(Request $request)
     {
-        static $readme;
-        if (!$readme) {
-            $readme = file_get_contents(base_path('README.md'));
-        }
-        return $readme;
+        var_dump(request()->uri());
+        return view('index/index');
     }
 
     public function view(Request $request)
